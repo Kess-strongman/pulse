@@ -1,0 +1,74 @@
+openapi: 3.0.0 
+consumes:
+- application/json
+info:
+  description: Pulse is a service that collects runtime data from different services
+produces:
+- application/json
+schemes:
+- http
+components:
+  schemas:
+    SuccessResult:
+      type: object
+      properties:
+        status:
+          type: string
+          description: ok if successfull 
+        message:
+          type: string
+paths:
+  /pulse/V01:
+   put:
+      tags: [main]
+      operationId: PutData
+      description: This endpoint handles incoming data
+      parameters:
+        - in: header
+          name: X-Request-Token
+          description: The request payload is a JSON string, wihch must contain a deviceID, and a data payload which will be a map of key value pairs. It is STRONGLY ADVISED that a ts - time stamp, formatted using ISO 8601, be included - but where this is absent, we will use the time of processing of the request as the timestamp. Lat and Lng (which MUST use the WGS 84 Web Mercator projection see - https://en.wikipedia.org/wiki/Web_Mercator_projection) can be provided, and where they are provided they will be used in the timeseries record, where they are not provided the registered lat and lng of the device will be used
+          schema:
+            type: string
+          required: true
+          example: "1021a413efdf0cca0fe00f5a17cf29d2"
+      requestBody:
+        description: AHA this is the descruption
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  deviceID:
+                    type: string
+                    example: "airsensaTHTTP0001"
+                  ts:
+                    type: string
+                    example: "2020-04-24T14:00:01Z"
+                    description: The time must be formatted according to ISO 8601
+                  lat:
+                    type: float
+                    example: 50
+                    required: false
+                  lng:
+                    type: float
+                    example: 1.2
+                    required: false
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties:
+                        oneOf:
+                          - type: string
+                          - type: number
+                          - type: boolean
+                    example: {"CAT":23, "TYPE": "Clown", "ALERT": false}
+      responses:
+        200:
+          description: 'Sussess Response'
+          schema:
+            $ref: '#/components/schemas/SuccessResult'
+        400:
+          description: Bad Request
+        401:
+          description: Token not found

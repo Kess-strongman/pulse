@@ -1,0 +1,7 @@
+{"Connstring": "airsensadev:FeralMarmosetBallon@tcp(209.97.130.11:3306)/airsensa?charset=utf8",
+    "Port": "8066",
+    "TSDTable": "tsd",
+    "DeviceCacheInterval":60,
+    "PushToDBInterval":5,
+    "PushToDBMaxItemsInQueue":2
+}

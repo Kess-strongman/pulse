@@ -1,0 +1,1289 @@
+openapi: 3.0.0
+consumes:
+- application/json
+info:
+  description: Storrm API documentation
+  title: Storrm API
+produces:
+- application/json
+schemes:
+- http
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    UserLoginResult:
+      type: object
+      properties:
+        status:
+          type: string
+          description: ok if successfull 
+        uid:
+          type: string
+        level:
+          type: string
+        username:
+          type: string
+        partner:
+          type: string
+        token:
+          type: string
+        message:
+          type: string
+      required:
+        - id
+        - name
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/V02/phenoms:
+    get:
+      tags: [phenoms]
+      operationId: List
+      responses:
+        200:
+          description: 'All phenoms'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        401:
+          description: Token not found
+  /api/V02/latest.json:
+    get:
+      tags: [latest]
+      operationId: List
+      parameters:
+        - in: query
+          name: suppress_public
+          schema:
+            type: string
+            format: string
+          required: false
+          description: String representing a boolean value ("true"/"false")
+      responses:
+        200:
+          description: 'Latest'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/locations/{locid}/groups:
+    get:
+      tags: [locations]
+      operationId: Get Groups
+      parameters:
+        - in: path
+          name: locid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: 'List of groups for location'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+    put:
+      tags: [locations]
+      operationId: Add Location To group
+      parameters:
+        - in: path
+          name: locid
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: query
+          name: groupid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: 'List of groups for location'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+    delete:
+      tags: [locations]
+      operationId: Remove Location from group
+      parameters:
+        - in: path
+          name: locid
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: query
+          name: groupid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: 'List of groups for location'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+  /api/V02/locations/{locid}/latest.json:
+    get:
+      tags: [locations]
+      operationId: List
+      parameters:
+        - in: path
+          name: locid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: 'Latest for a location'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+  /api/V02/locations/{locid}/averages.json: //i skipped this
+    get:
+      tags: [locations]
+      operationId: List
+      parameters:
+        - in: path
+          name: locid
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: query
+          name: start_ts
+          description: A start time stamp in the format YYYY-MM-DD HH:MM:SS (eg 2006-01-02 15:04:05) or YYYY-MM-DD (eg 2006-01-02)
+          schema:
+            type: string
+        - in: query
+          name: end_ts
+          description: An end time stamp in the format YYYY-MM-DD HH:MM:SS (eg 2006-01-02 15:04:05) or YYYY-MM-DD (eg 2006-01-02)
+          schema:
+            type: string
+        - in: query
+          name: last_hrs
+          description: Limits the data returned to the data created within the last last_hrs hours
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: last_days
+          description: Limits the data returned to the data created within the last last_days days
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: last_mins
+          description: Limits the data returned to the data created within the last last_mins minutes
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: split
+          description: A numeric value that denontes a span of time into which the data will be aggregated - eg a split of 30 will return data averaged into 30 minute values
+          schema:
+            type: integer
+
+      responses:
+        200:
+          description: 'Averages'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+  /api/V02/groups:
+    get:
+      tags: [groups]
+      operationId: List
+      parameters:
+        - in: query
+          name: partnerid
+          description: An AirSensa user can specify which partnership to get groups for - or omit the partner flag to get all groups. This parameter is ignored for other users
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        200:
+          description: 'Group'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    post:
+      tags: [groups]
+      operationId: List
+      parameters:
+        - in: path
+          name: grouptype
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: mindate
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: maxdate
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: maxdaysfromtoday
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: double
+        - in: path
+          name: candownload
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: canmanage
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: cansleep
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: canedit
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: basicedit
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: canmakepublic
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: caneditvisibility
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: allphenoms
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: phenomlist
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: partner_id
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        201:
+          description: 'Group created'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/groups/{groupid}:
+    put:
+      tags: [groups]
+      operationId: List
+      parameters:
+        - in: path
+          name: groupid
+          required: true
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: grouptype
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: mindate
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: maxdate
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: maxdaysfromtoday
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: double
+        - in: path
+          name: candownload
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: canmanage
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: cansleep
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: canedit
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: basicedit
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: canmakepublic
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: caneditvisibility
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: allphenoms
+          required: false
+          type: integer
+          schema:
+            format: integer
+            type: i64
+        - in: path
+          name: phenomlist
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+        - in: path
+          name: partner_id
+          required: false
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        200:
+          description: 'Group updated'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    get:
+      tags: [groups]
+      operationId: List
+      parameters:
+        - in: path
+          name: groupid
+          required: true
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        200:
+          description: 'Group'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    delete:
+      tags: [groups]
+      operationId: List
+      parameters:
+        - in: path
+          name: groupid
+          required: true
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        204:
+          description: 'Group deleted'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/users:
+    tags: [users]
+    get:
+      tags: [users]
+      operationId: List
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    post:
+      tags: [users]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user_name:
+                  type: string
+                user_level:
+                  type: string
+                  enum: [ADMIN,MANAGER,USER]
+                  default: true
+                  description: The user level will determine the default rights the user has.
+                user_email:
+                  type: string
+                user_phone:
+                  type: string
+                user_pwd_token:
+                  type: string
+                  description: A temporary password that the user can use to log in once
+                allocate_new_token_on_login:
+                  type: string
+                  enum: [true,false]
+                  default: true
+                partner_id:
+                  type: string
+              required:
+                - user_name
+                - user_level
+      responses:
+        201:
+          description: 'User created'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/users/{uid}:
+    parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+        description: The user ID
+    put:
+      tags: [users]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                user_name:
+                  type: string
+                user_level:
+                  type: string
+                  enum: [ADMIN,MANAGER,USER]
+                  default: true
+                  description: The user level will determine the default rights the user has.
+                user_email:
+                  type: string
+                user_phone:
+                  type: string
+                user_pwd_token:
+                  type: string
+                  description: A temporary password that the user can use to log in once
+                allocate_new_token_on_login:
+                  type: string
+                  enum: [true,false]
+                  default: true
+                partner_id:
+                  type: string
+              required:
+                - user_name
+                - user_level
+      responses:
+        200:
+          description: 'User updated'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    delete:
+      tags: [users]
+      operationId: List
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        200:
+          description: 'User deleted'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    get:
+      tags: [users]
+      operationId: List
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        200:
+          description: 'Get user details'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/users/{uid}/apikeys:
+    get:
+      tags: [users]
+      operationID: Get API Keys for user
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: "A list of the API Keys created for that user"
+          schema:
+            type: object
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/users/{uid}/apikeys/{keyid}:
+    delete:
+      tags: [users]
+      operationID: Delete An key for user
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: path
+          name: keyid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: "Confirmation that the operation was successful"
+          schema:
+            type: object
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    put:
+      tags: [users]
+      operationID: Delete An key for user
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: path
+          name: keyid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: "Confirmation that the operation was successful"
+          schema:
+            type: object
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+
+  /api/V02/users/{uid}/groups:
+    get:
+      tags: [users]
+      operationId: Get Groups for user
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: 'List of groups for user'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+    put:
+      tags: [users]
+      operationId: Add User To group
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: query
+          name: groupid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: 'User successfully added to group'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: User Not Found
+    delete:
+      tags: [users]
+      operationId: Remove User from group
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: query
+          name: groupid
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: 'User successfully removed from group'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: User or group Not Found
+  /api/V02/locationreport:
+    put:
+      description: Takes a location report and pops it into the DB
+      tags: [location reports]
+      operationId: PutLocationReport
+      parameters:
+        - in: body
+          schema:
+            type: object
+            properties:
+              ts:
+                type: string
+                example: "2020-04-24T14:00:01Z"
+              lat:
+                type: float
+                example: 1
+              lng:
+                type: float
+                example: 1.2
+      responses:
+        200:
+          description: The endpoint to which data is sent
+  /api/V02/locationreports:
+    put:
+      tags: [location reports]
+      operationId: PutLocationReports
+      description: Insert an array of location reports into the database
+      parameters:
+        - in: body
+          schema:
+            
+              type: array
+              items:
+                type: object
+                properties:
+                  ts:
+                    type: string
+                    example: "2020-04-24T14:00:01Z"
+                  lat:
+                    type: float
+                    example: 1
+                  lng:
+                    type: float
+                    example: 1.2
+      responses:
+        200:
+          description: The endpoint to which data is sent
+  /api/V02/surveyresponses/{surveyID}:
+    put:
+      tags: [surveys]
+      operationid: insertsurveyresponses
+      description: Insert a completed survey into the database
+      parameters:
+        - in: path
+          name: surveyID
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: body
+          schema:
+            type: object
+            properties:
+              ts:
+                type: string
+                example: "2020-04-24T14:00:01Z"
+              lat:
+                type: float
+                example: 1
+              lng:
+                type: float
+                example: 1.2
+              data:
+                type: object
+                additionalProperties:
+                  type: string
+      responses:
+        200:
+          description: The endpoint to which data is sent
+  /api/V02/survey/{surveyID}:
+    get:
+      tags: [surveys]
+      operationId: get survey spec from the server
+      parameters:
+        - in: path
+          name: surveyID
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: The endpoint to which data is sent
+  /api/V02/surveyresponses/{surveyID}/{ts}:
+    get:
+      tags: [surveys]
+      operationId: Retrieve survey responses for a given survey instance from the DB
+      parameters:
+        - in: path
+          name: surveyID
+          required: true
+          schema:
+            type: string
+            format: string
+        - in: path
+          name: ts
+          required: true
+          schema:
+            type: string
+            format: string
+            example: "2020-04-24T14:00:01Z"
+      responses:
+        200:
+          description: The endpoint to which data is sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  data:
+                    type: object
+                    additionalProperties:
+                      type: string
+                  token:
+                    type: string
+  /api/V02/surveyresponses:
+    get:
+      tags: [surveys]
+      operationId: Get list of surveys that the user has responended to
+      responses:
+        200:
+          description: 'List of surveys that the user has completed'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        SurveyID:
+                          type: string
+                        Name:
+                          type: string
+                        Description:
+                          type: string
+                        TS:
+                          type: string
+                  token:
+                    type: string
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+  /api/V02/surveys:
+    get:
+      tags: [surveys]
+      operationId: Get list of surveys that the user can access
+      responses:
+        200:
+          description: 'List of surveys that the user can take'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    SurveyID:
+                      type: string
+                    Name:
+                      type: string
+                    Description:
+                      type: string
+        400:
+          description: Bad Request
+        404:
+          description: Location Not Found
+  /api/V02/admin/tokenlogin:
+    get:
+      security: []
+      tags:
+        - authentication
+      summary: Gets a user by access token
+      description: >
+        Login user and retrieve token
+      operationId: getUserById
+      parameters:
+        - name: authtoken
+          in: query
+          description: A user token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResult'
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/admin/login:
+    get:
+      security: []
+      tags:
+        - authentication
+      summary: Gets a user by ID.
+      description: >
+        Login user and retrieve token
+      operationId: getUserById
+      parameters:
+        - name: uname
+          in: query
+          description: Username
+          required: true
+          schema:
+            type: string
+        - name: pwd
+          in: query
+          description: Password
+          required: true
+          schema:
+            format: string
+        - name: newpwd
+          in: query
+          description: Optional New Password
+          required: false
+          schema:
+            format: string
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResult'
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/admin/passwordreset:
+    get:
+      security: []
+      tags:
+        - authentication
+      summary: Request password reset
+      operationId: passwordreset
+      parameters:
+        - name: username
+          in: query
+          description: Username
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "ok"
+                    "example": "ok"
+        400:
+          description: Bad Request
+  /api/V02/locations:
+    get:
+      tags: [locations]
+      operationId: List
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    post:
+      tags: [locations]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                location_name:
+                  type: string
+                  description: A meaningful name for the location
+                location_id:
+                  type: string
+                  description: Unique id for this location. If this is blank, the Platform will generate one
+                partner_id:
+                  type: string
+                  description: Optional The partner ID to be assigned to the location
+                location_mac:
+                  type: string
+                  description: The hardware serial number of the device at this location
+                status:
+                  type: string
+                  decription: The current status of the location
+                  enum: ["NEW","LIVE","OFFLINE"]
+                  default: "NEW"
+                static:
+                  type: boolean
+                  default: true
+                  description: A flag that shows whether a location is static (fixed to a physical locaiton) or mobile
+                node_type:
+                  type: string
+                  description: The type of node that is deployed at this location
+                  enum: ["AQYBB","IAQ"]
+                  default: AQYBB
+                friendly_name:
+                    type: string
+                    description: A user friendly name for the location eg "St John's Primary School"
+                friendly_description:
+                    type: string
+                    description: A description of the location "A school in a rural setting"
+                location_lat:
+                    type: float
+                    description: The latitude of the location in decimal degrees
+                location_lng:
+                  type: float
+                  description: The longitude of the location in decimal degrees
+              required:
+                - location_name
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "ok"
+                    "example": "ok"
+                  data:
+                    type: string
+                    description: The locationID assigned to the new location
+                  token:
+                    type: string
+                    description: The current user access token
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "error"
+                    "example": "error"
+                  message:
+                    type: string
+                    description: The locationID assigned to the new location
+                  token:
+                    type: string
+                    description: The current user access token
+        404:
+          description: Not Found
+  /api/V02/locations/{locid}:
+    parameters:
+      - in: path
+        name: locid
+        schema:
+          type: string
+        required: true
+        description: The location ID
+    put:
+      tags: [locations]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                location_name:
+                  type: string
+                  description: A meaningful name for the location
+                location_mac:
+                  type: string
+                  description: The hardware serial number of the device at this location
+                status:
+                  type: string
+                  decription: The current status of the location
+                  enum: ["NEW","LIVE","OFFLINE"]
+                static:
+                  type: boolean
+                  default: true
+                  description: A flag that shows whether a location is static (fixed to a physical locaiton) or mobile
+                node_type:
+                  type: string
+                  description: The type of node that is deployed at this location
+                  enum: ["AQYBB","IAQ"]
+                  default: AQYBB
+                friendly_name:
+                  type: string
+                  description: A user friendly name for the location eg "St John's Primary School"
+                friendly_description:
+                  type: string
+                  description: A description of the location "A school in a rural setting"
+                location_lat:
+                  type: float
+                  description: The latitude of the location in decimal degrees
+                location_lng:
+                  type: float
+                  description: The longitude of the location in decimal degrees
+              required:
+                - location_id
+                - location_name
+      responses:
+        200:
+          description: 'Location updated'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    get:
+      tags: [locations]
+      operationId: List
+      parameters:
+        - in: path
+          name: locid
+          required: true
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        200:
+          description: 'Get location details'
+          content:
+            application/json:
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+    delete:
+      tags: [locations]
+      operationId: List
+      parameters:
+        - in: path
+          name: locid
+          required: true
+          type: string
+          schema:
+            format: string
+            type: string
+      responses:
+        200:
+          description: 'Location deleted'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /api/V02/admin/locations_menu:
+    get:
+      tags: [locations]
+      description: Returns a list of accessible locations along with useful metat data
+      responses:
+        200:
+          description: 'Location deleted'
+          schema:
+            type: array
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
