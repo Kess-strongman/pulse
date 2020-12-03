@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"pulseservice/config"
+	"pulseservice/ingestionhandlers"
 	"syscall"
 	"time"
 
@@ -48,6 +49,9 @@ func NewServer(port string) *myServer {
 	router.PathPrefix("/pulse/V01/swaggerui/").Handler(sh)
 
 	// Main endpoints
+	router.HandleFunc("/pulse/V01/hello", ingestionhandlers.HelloHandler)
+	router.HandleFunc("/pulse/V01/servicestatus", ingestionhandlers.ServiceStatusHandler)
+	router.HandleFunc("/pulse/V01/servicealert", ingestionhandlers.ServiceAlertHandler)
 
 	// CORS stuff
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "X-API-KEY", "X-Request-Token", "Content-Type"})
