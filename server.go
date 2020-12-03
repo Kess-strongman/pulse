@@ -3,15 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"httpingest/config"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"pulseservice/config"
 	"syscall"
 	"time"
 
-	"httpingest/ingest"
 	"sync"
 
 	"github.com/gorilla/handlers"
@@ -48,8 +47,7 @@ func NewServer(port string) *myServer {
 	sh := http.StripPrefix("/pulse/V01/swaggerui/", http.FileServer(http.Dir("./swaggerui/")))
 	router.PathPrefix("/pulse/V01/swaggerui/").Handler(sh)
 
-	// Main endpoint
-	router.HandleFunc("/pulse/V01", ingest.Handler).Methods("PUT")
+	// Main endpoints
 
 	// CORS stuff
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "X-API-KEY", "X-Request-Token", "Content-Type"})

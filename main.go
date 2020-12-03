@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"httpingest/config"
-	"httpingest/utils"
 	"log"
+	"pulseservice/config"
+	"pulseservice/utils"
 )
 
 func main() {
-
+	// This is the setup section
 	configLoadErr := config.Config.LoadFromFile("assets/config.json")
 	if configLoadErr != nil {
 		fmt.Println("Could not get configuration")
@@ -18,10 +18,11 @@ func main() {
 	fmt.Println(config.Config.GetConnString())
 	config.InitDatabase(config.Config.GetConnString())
 	service := NewServer(config.Config.GetPort())
-
+	// Worker Section
 	// Run any workers here
 	//service.WG.Add(1)
 
+	// Start main service
 	fmt.Printf("Starting Server on port %v\n", service.Addr)
 	log.Printf("Starting Server on port %v\n", service.Addr)
 
@@ -35,8 +36,8 @@ func main() {
 		}
 	}()
 
-	//wait shutdown
+	//Wait for shutdown
 	service.WaitShutdown()
-
+	// Do any final tidying up
 	log.Printf("Service Exiting")
 }
