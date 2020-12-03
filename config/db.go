@@ -1,10 +1,8 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
-	"time"
 
 	"context"
 
@@ -17,6 +15,7 @@ var DB *pgx.Pool
 
 //DBerr database error
 var DBerr error
+
 //InitDatabase to create connection
 func InitDatabase(connectionString string) {
 
@@ -28,3 +27,4 @@ func InitDatabase(connectionString string) {
 	if DBerr != nil {
 		fmt.Println("Unabled to Create DB Connection", DBerr)
 	}
+}
