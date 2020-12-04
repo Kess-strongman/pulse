@@ -39,19 +39,18 @@ func ServiceStatusHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var incomingHelloMessage HelloMessage
-		bodyBytesUnmarshalError := json.Unmarshal(bodyBytes, &incomingHelloMessage)
+		var incomingStatusMessage ServiceStatusMessage
+		bodyBytesUnmarshalError := json.Unmarshal(bodyBytes, &incomingStatusMessage)
 		if bodyBytesUnmarshalError != nil {
 			fmt.Println("Error ", bodyBytesUnmarshalError.Error())
+			w.Write([]byte("error"))
 		}
 
-		w.Write([]byte(incomingHelloMessage.ServiceName + "\n"))
-
+		w.Write([]byte("ok"))
 	} else {
 		fmt.Println("We dont have JSON")
+		w.Write([]byte("error"))
 	}
-
-	w.Write([]byte("Hello!"))
 }
 
 func ServiceAlertHandler(w http.ResponseWriter, r *http.Request) {
@@ -66,19 +65,19 @@ func ServiceAlertHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var incomingHelloMessage HelloMessage
-		bodyBytesUnmarshalError := json.Unmarshal(bodyBytes, &incomingHelloMessage)
+		var incomingAlertMessage ServiceAlert
+		bodyBytesUnmarshalError := json.Unmarshal(bodyBytes, &incomingAlertMessage)
 		if bodyBytesUnmarshalError != nil {
 			fmt.Println("Error ", bodyBytesUnmarshalError.Error())
+			w.Write([]byte("error"))
 		}
 
-		w.Write([]byte(incomingHelloMessage.ServiceName + "\n"))
+		w.Write([]byte("ok"))
 
 	} else {
 		fmt.Println("We dont have JSON")
+		w.Write([]byte("error"))
 	}
-
-	w.Write([]byte("Hello!"))
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {

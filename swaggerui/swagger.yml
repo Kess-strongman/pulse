@@ -72,3 +72,33 @@ paths:
           description: Bad Request
         401:
           description: Token not found
+  /pulse/V01/servicestatus:
+   put:
+      tags: [status]
+      operationId: List
+      description: This will update with the current status of each service
+      responses:
+        200:
+          description: 'Status'
+          content:
+          application/json:
+          schema:
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
+  /pulse/V01/servicealert:
+   put:
+      tags: [alert]
+      operationId: List
+      description: Updates with alerts about each service
+      responses:
+        200:
+          description: 'Alert'
+          content:
+          application/json:
+          schema:
+        400:
+          description: Bad Request
+        404:
+          description: Not Found
