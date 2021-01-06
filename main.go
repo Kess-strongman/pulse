@@ -14,6 +14,11 @@ func main() {
 		fmt.Println("Could not get configuration")
 		return
 	}
+	approvedappsLoadErr := config.AA.LoadFromFile("assets/approvedapps.json")
+	if approvedappsLoadErr != nil {
+		fmt.Println("Could not get approved apps")
+		return
+	}
 	utils.Logging()
 	fmt.Println(config.Config.GetConnString())
 	config.InitDatabase(config.Config.GetConnString())
