@@ -1,4 +1,4 @@
-{"Connstring": "airsensadev:FeralMarmosetBallon@tcp(209.97.130.11:3306)/airsensa?charset=utf8",
+{"Connstring": "host=178.128.170.66 port=5432 user=chloe password=squirrell dbname=Airsensa sslmode=disable",
     "Port": "8066",
     "TSDTable": "tsd",
     "DeviceCacheInterval":60,
