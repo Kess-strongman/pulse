@@ -53,6 +53,8 @@ func NewServer(port string) *myServer {
 	router.HandleFunc("/pulse/V01/servicestatus", ingestionhandlers.ServiceStatusHandler)
 	router.HandleFunc("/pulse/V01/servicealert", ingestionhandlers.ServiceAlertHandler)
 
+	router.HandleFunc("/pulse/V01/status", requesthandlers.ServiceGetStatusHandler)
+
 	// CORS stuff
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "X-API-KEY", "X-Request-Token", "Content-Type"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})

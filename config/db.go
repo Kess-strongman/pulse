@@ -50,7 +50,7 @@ type DBdatapayload struct {
 
 func InsertTimeSeriesRows(newrows []DBrow) error {
 	fmt.Println(newrows)
-	insertSQL := "INSERT INTO tsd (ts, location_id, device_id,lat, lng, data) VALUES " //ON CONFLICT ON CONSTRAINT tsd_pkey DO NOTHING;
+	insertSQL := "INSERT INTO pulsetsd (ts, location_id, device_id,lat, lng, data) VALUES " //ON CONFLICT ON CONSTRAINT tsd_pkey DO NOTHING;
 	var holder []interface{}
 	var parametercounter int64
 	parametercounter = 1

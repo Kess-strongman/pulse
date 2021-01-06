@@ -47,7 +47,7 @@ func ServiceStatusHandler(w http.ResponseWriter, r *http.Request) {
 			NewHash := fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%xs", bodyBytes)+Token)))
 			if NewHash != r.Header.Get("X-KEY-SECRET") {
 				log.Println("Hash error")
-				utils.ReturnWithError(401, "unauthorized hashy", w)
+				utils.ReturnWithError(401, "unauthorized hashy banana", w)
 				return
 			}
 
