@@ -1,4 +1,4 @@
-{"Connstring": "host=178.128.170.66 port=5432 user=chloe password=squirrell dbname=Airsensa sslmode=disable",
+{"Connstring": "host=178.128.170.66 port=5432 user=chloe password=squirrell dbname=Pulse sslmode=disable",
     "Port": "8066",
     "TSDTable": "pulsetsd",
     "DeviceCacheInterval":60,

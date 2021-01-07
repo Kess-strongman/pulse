@@ -1,6 +1,7 @@
 package config
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -85,4 +86,297 @@ func InsertTimeSeriesRow(newrow DBrow) error {
 	var DBrows []DBrow
 	DBrows = append(DBrows, newrow)
 	return InsertTimeSeriesRows(DBrows)
+}
+func GetMessageForAppBetweenTimes(appID string, startTime time.Time, endTime time.Time) ([]DBrow, error) {
+	var rowsToReturn []DBrow
+	latestEntriesSQL := `select pt.location_id, pt.ts, pt.device_id,pt.lat, pt.lng,pt.data from pulsetsd pt
+	where location_id = $1  and pt.ts > $2 and pt.ts < $3`
+
+	rows, err := DB.Query(context.Background(), latestEntriesSQL, appID, startTime, endTime)
+
+	if err != nil {
+		return rowsToReturn, err
+
+	}
+	defer rows.Close()
+	var dbTS sql.NullString
+	var dbLocID sql.NullString
+	var dbDeviceID sql.NullString
+	var dbLat sql.NullFloat64
+	var dbLng sql.NullFloat64
+	var dbData sql.NullString
+
+	for rows.Next() {
+		if scanErr := rows.Scan(&dbLocID, &dbTS, &dbDeviceID, &dbLat, &dbLng, &dbData); err != nil {
+			return nil, scanErr
+		}
+		if dbLocID.Valid && dbTS.Valid && dbDeviceID.Valid && dbLat.Valid && dbLng.Valid && dbData.Valid {
+			var newRow DBrow
+			/*
+				var newPayload DBdatapayload
+				newPayload.Dbool = make(map[string]bool)
+				newPayload.Dnum = make(map[string]float64)
+				newPayload.Dstring = make(map[string]string)
+			*/
+			var dbPL DBdatapayload
+			unmarshallerr := json.Unmarshal([]byte(dbData.String), &dbPL)
+			if unmarshallerr != nil {
+				return rowsToReturn, unmarshallerr
+			}
+			newRow.Data = dbPL
+			newRow.DeviceID = dbDeviceID.String
+			newRow.LocationID = dbLocID.String
+			newRow.Lat = dbLat.Float64
+			newRow.Lng = dbLng.Float64
+			// time comes in as 2021-01-07 13:56:25.022257
+			newTime, timeParseError := time.Parse("2006-01-02 15:04:05.000000Z", dbTS.String)
+			if timeParseError != nil {
+				return rowsToReturn, timeParseError
+
+			}
+			newRow.TS = newTime
+
+			rowsToReturn = append(rowsToReturn, newRow)
+
+		}
+
+	}
+
+	return rowsToReturn, nil
+
+}
+
+func GetLatestMessageForApp(appID string) ([]DBrow, error) {
+	var rowsToReturn []DBrow
+	latestEntriesSQL := `select sq.location_id, sq.ts, p2.device_id,p2.lat, p2.lng,p2.data from 
+	(select p1.location_id , max(p1.ts) as ts from pulsetsd p1 where location_id = $1 group by p1.location_id) as sq 
+	left join pulsetsd p2 on (p2.location_id = sq.location_id and p2.ts = sq.ts)`
+
+	rows, err := DB.Query(context.Background(), latestEntriesSQL, appID)
+	if err != nil {
+		return rowsToReturn, err
+	}
+	defer rows.Close()
+	var dbTS sql.NullString
+	var dbLocID sql.NullString
+	var dbDeviceID sql.NullString
+	var dbLat sql.NullFloat64
+	var dbLng sql.NullFloat64
+	var dbData sql.NullString
+
+	for rows.Next() {
+		if scanErr := rows.Scan(&dbLocID, &dbTS, &dbDeviceID, &dbLat, &dbLng, &dbData); err != nil {
+			return nil, scanErr
+		}
+		if dbLocID.Valid && dbTS.Valid && dbDeviceID.Valid && dbLat.Valid && dbLng.Valid && dbData.Valid {
+			var newRow DBrow
+			/*
+				var newPayload DBdatapayload
+				newPayload.Dbool = make(map[string]bool)
+				newPayload.Dnum = make(map[string]float64)
+				newPayload.Dstring = make(map[string]string)
+			*/
+			var dbPL DBdatapayload
+			unmarshallerr := json.Unmarshal([]byte(dbData.String), &dbPL)
+			if unmarshallerr != nil {
+				return rowsToReturn, unmarshallerr
+			}
+			newRow.Data = dbPL
+			newRow.DeviceID = dbDeviceID.String
+			newRow.LocationID = dbLocID.String
+			newRow.Lat = dbLat.Float64
+			newRow.Lng = dbLng.Float64
+			// time comes in as 2021-01-07 13:56:25.022257
+			newTime, timeParseError := time.Parse("2006-01-02T15:04:05.000000Z", dbTS.String)
+			if timeParseError != nil {
+				return rowsToReturn, timeParseError
+
+			}
+			newRow.TS = newTime
+
+			rowsToReturn = append(rowsToReturn, newRow)
+
+		}
+
+	}
+
+	return rowsToReturn, nil
+
+}
+
+func GetLatestServiceStatusMessages() ([]DBrow, error) {
+	var rowsToReturn []DBrow
+	latestEntriesSQL := `select sq.location_id, sq.ts, p2.device_id,p2.lat, p2.lng,p2.data from 
+	(select p1.location_id , max(p1.ts) as ts from pulsetsd p1 where device_id = 'ServiceStatusMessage' group by p1.location_id) as sq 
+	left join pulsetsd p2 on (p2.location_id = sq.location_id and p2.ts = sq.ts)`
+
+	rows, err := DB.Query(context.Background(), latestEntriesSQL)
+	if err != nil {
+		return rowsToReturn, err
+
+	}
+	defer rows.Close()
+	var dbTS sql.NullString
+	var dbLocID sql.NullString
+	var dbDeviceID sql.NullString
+	var dbLat sql.NullFloat64
+	var dbLng sql.NullFloat64
+	var dbData sql.NullString
+
+	for rows.Next() {
+		if scanErr := rows.Scan(&dbLocID, &dbTS, &dbDeviceID, &dbLat, &dbLng, &dbData); err != nil {
+			return nil, scanErr
+		}
+		if dbLocID.Valid && dbTS.Valid && dbDeviceID.Valid && dbLat.Valid && dbLng.Valid && dbData.Valid {
+			var newRow DBrow
+			/*
+				var newPayload DBdatapayload
+				newPayload.Dbool = make(map[string]bool)
+				newPayload.Dnum = make(map[string]float64)
+				newPayload.Dstring = make(map[string]string)
+			*/
+			var dbPL DBdatapayload
+			unmarshallerr := json.Unmarshal([]byte(dbData.String), &dbPL)
+			if unmarshallerr != nil {
+				return rowsToReturn, unmarshallerr
+			}
+			newRow.Data = dbPL
+			newRow.DeviceID = dbDeviceID.String
+			newRow.LocationID = dbLocID.String
+			newRow.Lat = dbLat.Float64
+			newRow.Lng = dbLng.Float64
+			// time comes in as 2021-01-07 13:56:25.022257
+			newTime, timeParseError := time.Parse("2006-01-02T15:04:05.000000Z", dbTS.String)
+			if timeParseError != nil {
+				return rowsToReturn, timeParseError
+
+			}
+			newRow.TS = newTime
+
+			rowsToReturn = append(rowsToReturn, newRow)
+
+		}
+
+	}
+
+	return rowsToReturn, nil
+
+}
+
+func GetLatestHelloMessages() ([]DBrow, error) {
+	var rowsToReturn []DBrow
+	latestEntriesSQL := `select sq.location_id, sq.ts, p2.device_id,p2.lat, p2.lng,p2.data from 
+	(select p1.location_id , max(p1.ts) as ts from pulsetsd p1 where device_id = 'HelloMessage' group by p1.location_id) as sq 
+	left join pulsetsd p2 on (p2.location_id = sq.location_id and p2.ts = sq.ts)`
+
+	rows, err := DB.Query(context.Background(), latestEntriesSQL)
+	if err != nil {
+		return rowsToReturn, err
+
+	}
+	defer rows.Close()
+	var dbTS sql.NullString
+	var dbLocID sql.NullString
+	var dbDeviceID sql.NullString
+	var dbLat sql.NullFloat64
+	var dbLng sql.NullFloat64
+	var dbData sql.NullString
+
+	for rows.Next() {
+		if scanErr := rows.Scan(&dbLocID, &dbTS, &dbDeviceID, &dbLat, &dbLng, &dbData); err != nil {
+			return nil, scanErr
+		}
+		if dbLocID.Valid && dbTS.Valid && dbDeviceID.Valid && dbLat.Valid && dbLng.Valid && dbData.Valid {
+			var newRow DBrow
+			/*
+				var newPayload DBdatapayload
+				newPayload.Dbool = make(map[string]bool)
+				newPayload.Dnum = make(map[string]float64)
+				newPayload.Dstring = make(map[string]string)
+			*/
+			var dbPL DBdatapayload
+			unmarshallerr := json.Unmarshal([]byte(dbData.String), &dbPL)
+			if unmarshallerr != nil {
+				return rowsToReturn, unmarshallerr
+			}
+			newRow.Data = dbPL
+			newRow.DeviceID = dbDeviceID.String
+			newRow.LocationID = dbLocID.String
+			newRow.Lat = dbLat.Float64
+			newRow.Lng = dbLng.Float64
+			// time comes in as 2021-01-07 13:56:25.022257
+			newTime, timeParseError := time.Parse("2006-01-02T15:04:05.000000Z", dbTS.String)
+			if timeParseError != nil {
+				return rowsToReturn, timeParseError
+
+			}
+			newRow.TS = newTime
+
+			rowsToReturn = append(rowsToReturn, newRow)
+
+		}
+
+	}
+
+	return rowsToReturn, nil
+
+}
+
+func GetLatestEntries() ([]DBrow, error) {
+	var rowsToReturn []DBrow
+	latestEntriesSQL := `select sq.location_id, sq.ts, p2.device_id,p2.lat, p2.lng,p2.data from 
+	(select p1.location_id , max(p1.ts) as ts from pulsetsd p1 group by p1.location_id) as sq 
+	left join pulsetsd p2 on (p2.location_id = sq.location_id and p2.ts = sq.ts)`
+
+	rows, err := DB.Query(context.Background(), latestEntriesSQL)
+	if err != nil {
+		return rowsToReturn, err
+
+	}
+	defer rows.Close()
+	var dbTS sql.NullString
+	var dbLocID sql.NullString
+	var dbDeviceID sql.NullString
+	var dbLat sql.NullFloat64
+	var dbLng sql.NullFloat64
+	var dbData sql.NullString
+
+	for rows.Next() {
+		if scanErr := rows.Scan(&dbLocID, &dbTS, &dbDeviceID, &dbLat, &dbLng, &dbData); err != nil {
+			return nil, scanErr
+		}
+		if dbLocID.Valid && dbTS.Valid && dbDeviceID.Valid && dbLat.Valid && dbLng.Valid && dbData.Valid {
+			var newRow DBrow
+			/*
+				var newPayload DBdatapayload
+				newPayload.Dbool = make(map[string]bool)
+				newPayload.Dnum = make(map[string]float64)
+				newPayload.Dstring = make(map[string]string)
+			*/
+			var dbPL DBdatapayload
+			unmarshallerr := json.Unmarshal([]byte(dbData.String), &dbPL)
+			if unmarshallerr != nil {
+				return rowsToReturn, unmarshallerr
+			}
+			newRow.Data = dbPL
+			newRow.DeviceID = dbDeviceID.String
+			newRow.LocationID = dbLocID.String
+			newRow.Lat = dbLat.Float64
+			newRow.Lng = dbLng.Float64
+			// time comes in as 2021-01-07 13:56:25.022257
+			newTime, timeParseError := time.Parse("2006-01-02T15:04:05.000000Z", dbTS.String)
+			if timeParseError != nil {
+				return rowsToReturn, timeParseError
+
+			}
+			newRow.TS = newTime
+
+			rowsToReturn = append(rowsToReturn, newRow)
+
+		}
+
+	}
+
+	return rowsToReturn, nil
+
 }
