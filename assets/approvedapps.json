@@ -6,5 +6,9 @@
     {
         "Token":"TESTADMIN",
         "Application":"ADMIN"
+    },
+    {
+        "Token": "PULSETESTSECRET",
+        "Application": "PULSETEST"
     }
 ]

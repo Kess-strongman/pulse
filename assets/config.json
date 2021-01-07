@@ -1,6 +1,6 @@
 {"Connstring": "host=178.128.170.66 port=5432 user=chloe password=squirrell dbname=Airsensa sslmode=disable",
     "Port": "8066",
-    "TSDTable": "tsd",
+    "TSDTable": "pulsetsd",
     "DeviceCacheInterval":60,
     "PushToDBInterval":5,
     "PushToDBMaxItemsInQueue":2

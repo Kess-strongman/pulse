@@ -19,9 +19,9 @@ type HelloMessage struct {
 	TS          time.Time `json:"ts"`
 }
 type ServiceStatusMessage struct {
-	ServiceName   string    `json:"serviceName"`
-	MemoryUsageMB float64   `json:"memoryUsageMB"`
-	TS            time.Time `json:"ts"`
+	ServiceName string `json:"serviceName"`
+	DataPoionts map[string]interface{}
+	TS          time.Time `json:"ts"`
 }
 type ServiceAlert struct {
 	ServiceName string    `json:"serviceName"`
@@ -187,9 +187,22 @@ func (me *ServiceStatusMessage) ToDBrow() config.DBrow {
 	tempro.TS = me.TS.UTC()
 	tempro.Lat = 50.9
 	tempro.Lng = -1.5
-	tempDnum := make(map[string]float64)
-	tempDnum["memoryUsageMB"] = me.MemoryUsageMB
-	tempro.Data.Dnum = tempDnum
+	for statusName, status := range me.DataPoionts {
+		switch v := status.(type) {
+		case float64:
+			tempDnum := make(map[string]float64)
+			tempDnum[statusName] = v
+			tempro.Data.Dnum = tempDnum
+		case string:
+			tempDstring := make(map[string]string)
+			tempDstring[statusName] = v
+			tempro.Data.Dstring = tempDstring
+		case bool:
+			tempDbool := make(map[string]bool)
+			tempDbool[statusName] = v
+			tempro.Data.Dbool = tempDbool
+		}
+	}
 
 	return tempro
 }

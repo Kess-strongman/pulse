@@ -70,12 +70,12 @@ func InsertTimeSeriesRows(newrows []DBrow) error {
 		holder = append(holder, tempro.TS, tempro.LocationID, tempro.DeviceID, tempro.Lat, tempro.Lng, string(dataInBytes))
 	}
 	insertSQL = strings.TrimRight(insertSQL, ",")
-	insertSQL = insertSQL + "ON CONFLICT ON CONSTRAINT tsd_pkey DO NOTHING;"
+	insertSQL = insertSQL + "ON CONFLICT ON CONSTRAINT pulsetsd_pkey DO NOTHING;"
 	fmt.Println(insertSQL)
 	d, result := DB.Exec(context.Background(), insertSQL, holder...)
 	fmt.Println(newrows, d.RowsAffected())
 	if result != nil {
-		fmt.Println("Error in create TSD", result.Error())
+		fmt.Println("Error in create pulse TSD", result.Error())
 		return result
 	}
 	return nil

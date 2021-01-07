@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"pulseservice/config"
 	"pulseservice/ingestionhandlers"
+	"pulseservice/requesthandlers"
 	"syscall"
 	"time"
 
@@ -54,6 +55,7 @@ func NewServer(port string) *myServer {
 	router.HandleFunc("/pulse/V01/servicealert", ingestionhandlers.ServiceAlertHandler)
 
 	router.HandleFunc("/pulse/V01/status", requesthandlers.ServiceGetStatusHandler)
+	router.HandleFunc("/pulse/V01/alert", requesthandlers.ServiceGetAlertHandler)
 
 	// CORS stuff
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "X-API-KEY", "X-Request-Token", "Content-Type"})
