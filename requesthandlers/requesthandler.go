@@ -22,13 +22,5 @@ func ServiceGetStatusHandler(w http.ResponseWriter, r *http.Request) {
 
 // ServiceGetAlertHandler - receives a request for service alerts
 func ServiceGetAlertHandler(w http.ResponseWriter, r *http.Request) {
-	var ServiceName string
-	var TS time.Time
-	var Level string
-	var Text string
-	var Data string
-	var EntryType string
 
-	sentServiceName := r.URL.Query()["servicename"]
-	sentTS := r.URL.Query()["ts"]
 }
