@@ -187,22 +187,24 @@ func (me *ServiceStatusMessage) ToDBrow() config.DBrow {
 	tempro.TS = me.TS.UTC()
 	tempro.Lat = 50.9
 	tempro.Lng = -1.5
+	tempDnum := make(map[string]float64)
+	tempDstring := make(map[string]string)
+	tempDbool := make(map[string]bool)
 	for statusName, status := range me.DataPoionts {
 		switch v := status.(type) {
 		case float64:
-			tempDnum := make(map[string]float64)
 			tempDnum[statusName] = v
-			tempro.Data.Dnum = tempDnum
+		case int:
+			tempDnum[statusName] = float64(v)
 		case string:
-			tempDstring := make(map[string]string)
 			tempDstring[statusName] = v
-			tempro.Data.Dstring = tempDstring
 		case bool:
-			tempDbool := make(map[string]bool)
 			tempDbool[statusName] = v
-			tempro.Data.Dbool = tempDbool
 		}
 	}
+	tempro.Data.Dnum = tempDnum
+	tempro.Data.Dstring = tempDstring
+	tempro.Data.Dbool = tempDbool
 
 	return tempro
 }
