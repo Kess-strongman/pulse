@@ -26,7 +26,56 @@ func ServiceGetLatestHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := config.GetLatestEntries()
 	if err != nil {
 		// Figure out how to return an error - status bad request
-		//
+		fmt.Println("Bad Request", err)
+		return
+	}
+	outdata, marshaleerr := json.MarshalIndent(rows, " ", " ")
+	if marshaleerr == nil {
+		w.Write(outdata)
+	}
+}
+
+func ServiceGetMessageForAppBetweenTimesHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err = config.GetMessageForAppBetweenTimes("pulseTest", 2021-01-07 13:53:24.86751, 2021-01-07 13:56:25.022257) //many confusion
+	if err != nil {
+		fmt.Println("Bad Request", err)
+		return
+	}
+	outdata, marshaleerr := json.MarshalIndent(rows, " ", " ")
+	if marshaleerr == nil {
+		w.Write(outdata)
+	}
+}
+
+func ServiceGetLatestMessageForAppHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err := config.GetLatestMessageForApp("pulseTest")
+	if err != nil {
+		fmt.Println("Bad Request", err)
+		return
+	}
+	outdata, marshaleerr := json.MarshalIndent(rows, " ", " ")
+	if marshaleerr == nil {
+		w.Write(outdata)
+	}
+}
+
+func GetLatestServiceStatusMessagesHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err := config.GetLatestServiceStatusMessages()
+	if err != nil {
+		fmt.Println("Bad Request", err)
+		return
+	}
+	outdata, marshaleerr := json.MarshalIndent(rows, " ", " ")
+	if marshaleerr == nil {
+		w.Write(outdata)
+	}
+}
+
+func GetLatestHelloMessagesHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err := config.GetLatestHelloMessages()
+	if err != nil {
+		fmt.Println("Bad Request", err)
+		return
 	}
 	outdata, marshaleerr := json.MarshalIndent(rows, " ", " ")
 	if marshaleerr == nil {

@@ -26,8 +26,12 @@ func main() {
 	// Worker Section
 	// Run any workers here
 	//service.WG.Add(1)
-	b, e := config.GetLatestEntries()
+	//b, e := config.GetLatestEntries()
+	//b, e := config.GetLatestMessageForApp("pulseTest")
+	//b, e := config.GetLatestServiceStatusMessages()
+	b, e := config.GetLatestHelloMessages()
 	fmt.Println(b, e)
+
 	// Start main service
 	fmt.Printf("Starting Server on port %v\n", service.Addr)
 	log.Printf("Starting Server on port %v\n", service.Addr)
