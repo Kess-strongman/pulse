@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"pulseservice/config"
+	"pulseservice/utils"
 	"time"
 )
 
@@ -36,12 +37,49 @@ func ServiceGetLatestHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServiceGetMessageForAppBetweenTimesHandler(w http.ResponseWriter, r *http.Request) {
-	rows, err = config.GetMessageForAppBetweenTimes("pulseTest", 2021-01-07 13:53:24.86751, 2021-01-07 13:56:25.022257) //many confusion
-	if err != nil {
-		fmt.Println("Bad Request", err)
+	// So we need tha APP ID, and the start and end date from the request
+	appId, appidErr := utils.GetQueryParam(r, "appid")
+	if appidErr != nil {
+		utils.ReturnWithError(http.StatusBadRequest, "No appid provided", w)
 		return
 	}
-	outdata, marshaleerr := json.MarshalIndent(rows, " ", " ")
+	sdate, sdateErr := utils.GetQueryParam(r, "sdate")
+	if sdateErr != nil {
+		utils.ReturnWithError(http.StatusBadRequest, "No startdate provided", w)
+		return
+	}
+	edate, edateErr := utils.GetQueryParam(r, "edate")
+	if edateErr != nil {
+		utils.ReturnWithError(http.StatusBadRequest, "No end date provided", w)
+		return
+	}
+	// Now try to convert the provided start date and end date to golang date types
+	StartTime, StartTimeParseError := time.Parse("2006-01-02T15:04:05Z", sdate)
+	if StartTimeParseError != nil {
+		StartTime, StartTimeParseError = time.Parse("2006-01-02 15:04:05", sdate)
+
+	}
+	if StartTimeParseError != nil {
+		utils.ReturnWithError(http.StatusBadRequest, "Could not parse StartDate", w)
+		return
+	}
+	EndTime, EndTimeParseError := time.Parse("2006-01-02T15:04:05Z", edate)
+	if EndTimeParseError != nil {
+		EndTime, EndTimeParseError = time.Parse("2006-01-02 15:04:05", edate)
+
+	}
+	if EndTimeParseError != nil {
+		utils.ReturnWithError(http.StatusBadRequest, "Could not parse End Date", w)
+		return
+	}
+
+	MessageRows, GetMessagesErr := config.GetMessageForAppBetweenTimes(appId, StartTime, EndTime) //many confusion
+	if GetMessagesErr != nil {
+		fmt.Println("Bad Request", GetMessagesErr)
+		return
+	}
+
+	outdata, marshaleerr := json.MarshalIndent(MessageRows, " ", " ")
 	if marshaleerr == nil {
 		w.Write(outdata)
 	}

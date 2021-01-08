@@ -92,9 +92,12 @@ func GetMessageForAppBetweenTimes(appID string, startTime time.Time, endTime tim
 	latestEntriesSQL := `select pt.location_id, pt.ts, pt.device_id,pt.lat, pt.lng,pt.data from pulsetsd pt
 	where location_id = $1  and pt.ts > $2 and pt.ts < $3`
 
+	fmt.Println("GetMessagesforAppBetween", startTime, " and ", endTime)
+
 	rows, err := DB.Query(context.Background(), latestEntriesSQL, appID, startTime, endTime)
 
 	if err != nil {
+		fmt.Println(err)
 		return rowsToReturn, err
 
 	}
@@ -107,6 +110,7 @@ func GetMessageForAppBetweenTimes(appID string, startTime time.Time, endTime tim
 	var dbData sql.NullString
 
 	for rows.Next() {
+		fmt.Println("Scanning")
 		if scanErr := rows.Scan(&dbLocID, &dbTS, &dbDeviceID, &dbLat, &dbLng, &dbData); err != nil {
 			return nil, scanErr
 		}
@@ -129,7 +133,7 @@ func GetMessageForAppBetweenTimes(appID string, startTime time.Time, endTime tim
 			newRow.Lat = dbLat.Float64
 			newRow.Lng = dbLng.Float64
 			// time comes in as 2021-01-07 13:56:25.022257
-			newTime, timeParseError := time.Parse("2006-01-02 15:04:05.000000Z", dbTS.String)
+			newTime, timeParseError := time.Parse("2006-01-02T15:04:05.000000Z", dbTS.String)
 			if timeParseError != nil {
 				return rowsToReturn, timeParseError
 

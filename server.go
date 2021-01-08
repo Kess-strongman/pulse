@@ -58,7 +58,7 @@ func NewServer(port string) *myServer {
 	router.HandleFunc("/pulse/V01/latestforapp", requesthandlers.ServiceGetLatestMessageForAppHandler).Methods("GET")
 	router.HandleFunc("/pulse/V01/lateststatus", requesthandlers.GetLatestServiceStatusMessagesHandler).Methods("GET")
 	router.HandleFunc("/pulse/V01/latesthello", requesthandlers.GetLatestHelloMessagesHandler).Methods("GET")
-
+	router.HandleFunc("/pulse/V01/messages", requesthandlers.ServiceGetMessageForAppBetweenTimesHandler).Methods("GET")
 	//router.HandleFunc("/pulse/V01/alert", requesthandlers.ServiceGetAlertHandler).Methods("GET")
 
 	// CORS stuff
