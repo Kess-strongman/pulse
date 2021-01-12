@@ -24,6 +24,20 @@ func ServiceGetStatusHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServiceGetLatestHandler(w http.ResponseWriter, r *http.Request) {
+	token := utils.GetAuthTokenFromRequest(r)
+	rights, rightserror := utils.GetRights(token)
+	if rightserror != nil {
+		fmt.Println("Bad Request", rightserror)
+		// We need to update this so it returns a nicely formatted error - You can cheat by copying this from production service
+		return
+
+	}
+	if !utils.CanAdminPulse(rights) {
+		fmt.Println("Bad Request - No rights")
+		return
+
+	}
+
 	rows, err := config.GetLatestEntries()
 	if err != nil {
 		// Figure out how to return an error - status bad request

@@ -60,6 +60,7 @@ func NewServer(port string) *myServer {
 	router.HandleFunc("/pulse/V01/latesthello", requesthandlers.GetLatestHelloMessagesHandler).Methods("GET")
 	router.HandleFunc("/pulse/V01/messages", requesthandlers.ServiceGetMessageForAppBetweenTimesHandler).Methods("GET")
 	//router.HandleFunc("/pulse/V01/alert", requesthandlers.ServiceGetAlertHandler).Methods("GET")
+	//router.HandleFunc("/pulse/V01/tokenlogin", requesthandlers.TokenLogin).Methods("GET")
 
 	// CORS stuff
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "X-API-KEY", "X-Request-Token", "Content-Type"})
