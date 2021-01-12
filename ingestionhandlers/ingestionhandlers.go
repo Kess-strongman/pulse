@@ -76,6 +76,7 @@ func ServiceStatusHandler(w http.ResponseWriter, r *http.Request) {
 		utils.ReturnWithError(http.StatusBadRequest, "you must send JSON", w)
 		return
 	}
+	w.Write([]byte("StatusSaved"))
 }
 
 func ServiceAlertHandler(w http.ResponseWriter, r *http.Request) {
@@ -115,6 +116,7 @@ func ServiceAlertHandler(w http.ResponseWriter, r *http.Request) {
 		utils.ReturnWithError(http.StatusBadRequest, "you must send JSON", w)
 		return
 	}
+	w.Write([]byte("StatusSaved"))
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
@@ -137,6 +139,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else {
+
 			utils.ReturnWithError(401, "unauthorized token", w)
 			return
 		}
@@ -147,7 +150,10 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 			utils.ReturnWithError(http.StatusInternalServerError, "could not unmarshal body", w)
 			return
 		}
-		config.InsertTimeSeriesRow(incomingHelloMessage.ToDBrow())
+		InsertError := config.InsertTimeSeriesRow(incomingHelloMessage.ToDBrow())
+		if InsertError != nil {
+			log.Println("Error saving hello message", InsertError.Error())
+		}
 		w.Write([]byte(incomingHelloMessage.ServiceName + "\n"))
 
 	} else {
