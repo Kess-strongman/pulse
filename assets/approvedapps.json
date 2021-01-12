@@ -14,5 +14,9 @@
     {
         "Token": "idgafwtibintdishya",
         "Application": "CalibrationController"
+    },
+    {   "Token":"TESTLADATA",
+        "Application":"LADATA"
     }
+
 ]
