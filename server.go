@@ -44,6 +44,7 @@ func NewServer(port string) *myServer {
 
 	//register handlers
 	router.HandleFunc("/pulse", s.RootHandler)
+	router.NotFoundHandler = http.HandlerFunc(notFound)
 
 	// Swagger
 	sh := http.StripPrefix("/pulse/V01/swaggerui/", http.FileServer(http.Dir("./swaggerui/")))
@@ -69,6 +70,9 @@ func NewServer(port string) *myServer {
 	s.Handler = handlers.CORS(headersOk, originsOk, methodsOk)(router)
 
 	return s
+}
+func notFound(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(r.RequestURI))
 }
 
 func (s *myServer) WaitShutdown() {
