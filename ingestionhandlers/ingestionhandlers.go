@@ -120,11 +120,11 @@ func ServiceAlertHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	body := r.Body
 
 	if strings.Contains(r.Header.Get("Content-Type"), "application/json") == true {
-		log.Println("We have some JSON", body)
-		bodyBytes, BodyReadErr := ioutil.ReadAll(body)
+		log.Println("We have some JSON")
+		defer r.Body.Close()
+		bodyBytes, BodyReadErr := ioutil.ReadAll(r.Body)
 		if BodyReadErr != nil {
 			utils.ReturnWithError(http.StatusInternalServerError, "could not read body", w)
 			return
