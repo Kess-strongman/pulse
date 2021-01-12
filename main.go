@@ -5,6 +5,7 @@ import (
 	"log"
 	"pulseservice/config"
 	"pulseservice/utils"
+	"time"
 )
 
 func main() {
@@ -29,7 +30,20 @@ func main() {
 	//b, e := config.GetLatestEntries()
 	//b, e := config.GetLatestMessageForApp("pulseTest")
 	//b, e := config.GetLatestServiceStatusMessages()
-	b, e := config.GetLatestHelloMessages()
+	//b, e := config.GetLatestHelloMessages()
+	sdate := "2021-01-07 13:53:24.86751"
+	StartTime, StartTimeParseError := time.Parse("2006-01-02T15:04:05Z", sdate)
+	if StartTimeParseError != nil {
+		StartTime, StartTimeParseError = time.Parse("2006-01-02 15:04:05", sdate)
+
+	}
+	edate := "2021-01-07 13:56:25.022257"
+	EndTime, EndTimeParseError := time.Parse("2006-01-02T15:04:05Z", edate)
+	if EndTimeParseError != nil {
+		EndTime, EndTimeParseError = time.Parse("2006-01-02 15:04:05", edate)
+
+	}
+	b, e := config.GetMessageForAppBetweenTimes("pulseTest", StartTime, EndTime)
 	fmt.Println(b, e)
 
 	// Start main service

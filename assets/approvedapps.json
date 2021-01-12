@@ -10,5 +10,9 @@
     {
         "Token": "PULSETESTSECRET",
         "Application": "PULSETEST"
+    },
+    {
+        "Token": "idgafwtibintdishya",
+        "Application": "CalibrationController"
     }
 ]
