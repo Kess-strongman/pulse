@@ -33,7 +33,7 @@ func NewServer(port string) *myServer {
 	//create server - this version creates a server that listens on any address
 	s := &myServer{
 		Server: http.Server{
-			Addr:         ":" + port,
+			Addr:         "127.0.0.1:" + port,
 			ReadTimeout:  30 * time.Second,
 			WriteTimeout: 30 * time.Second,
 		},
