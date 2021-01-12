@@ -33,7 +33,7 @@ func NewServer(port string) *myServer {
 	//create server - this version creates a server that listens on any address
 	s := &myServer{
 		Server: http.Server{
-			Addr:         ":" + port,
+			Addr:         "127.0.0.1:" + port,
 			ReadTimeout:  30 * time.Second,
 			WriteTimeout: 30 * time.Second,
 		},
@@ -44,6 +44,7 @@ func NewServer(port string) *myServer {
 
 	//register handlers
 	router.HandleFunc("/pulse", s.RootHandler)
+	router.NotFoundHandler = http.HandlerFunc(notFound)
 
 	// Swagger
 	sh := http.StripPrefix("/pulse/V01/swaggerui/", http.FileServer(http.Dir("./swaggerui/")))
@@ -69,6 +70,10 @@ func NewServer(port string) *myServer {
 	s.Handler = handlers.CORS(headersOk, originsOk, methodsOk)(router)
 
 	return s
+}
+func notFound(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write([]byte(r.RequestURI))
 }
 
 func (s *myServer) WaitShutdown() {
