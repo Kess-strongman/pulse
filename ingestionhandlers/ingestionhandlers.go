@@ -123,8 +123,8 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	body := r.Body
 
 	if strings.Contains(r.Header.Get("Content-Type"), "application/json") == true {
-		fmt.Println("We have some JSON", body)
-		bodyBytes, BodyReadErr := ioutil.ReadAll(r.Body)
+		log.Println("We have some JSON", body)
+		bodyBytes, BodyReadErr := ioutil.ReadAll(body)
 		if BodyReadErr != nil {
 			utils.ReturnWithError(http.StatusInternalServerError, "could not read body", w)
 			return
