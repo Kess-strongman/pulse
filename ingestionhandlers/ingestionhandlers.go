@@ -133,7 +133,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 		if Token != " " {
 			NewHash := fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%xs", bodyBytes)+Token)))
 			if NewHash != r.Header.Get("X-KEY-SECRET") {
-				log.Println("Hash error")
+				log.Println("Hash error: Received :", r.Header.Get("X-KEY-SECRET"), " Calculated ", NewHash)
 				utils.ReturnWithError(401, "unauthorized hash", w)
 				return
 			}
