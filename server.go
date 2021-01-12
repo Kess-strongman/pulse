@@ -52,8 +52,8 @@ func NewServer(port string) *myServer {
 
 	// Main endpoints
 	router.HandleFunc("/pulse/V01/hello", ingestionhandlers.HelloHandler).Methods("POST", "GET")
-	router.HandleFunc("/pulse/V01/servicestatus", ingestionhandlers.ServiceStatusHandler).Methods("POST")
-	router.HandleFunc("/pulse/V01/servicealert", ingestionhandlers.ServiceAlertHandler).Methods("POST")
+	router.HandleFunc("/pulse/V01/servicestatus", ingestionhandlers.ServiceStatusHandler).Methods("POST", "GET")
+	router.HandleFunc("/pulse/V01/servicealert", ingestionhandlers.ServiceAlertHandler).Methods("POST", "GET")
 
 	router.HandleFunc("/pulse/V01/latest", requesthandlers.ServiceGetLatestHandler).Methods("GET")
 	router.HandleFunc("/pulse/V01/latestforapp", requesthandlers.ServiceGetLatestMessageForAppHandler).Methods("GET")
