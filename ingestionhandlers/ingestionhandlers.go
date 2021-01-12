@@ -26,7 +26,7 @@ type ServiceStatusMessage struct {
 type ServiceAlert struct {
 	ServiceName string    `json:"serviceName"`
 	TS          time.Time `json:"ts"`
-	Level       string    `json:"alertLevel"`
+	Level       int       `json:"alertLevel"`
 	Text        string    `json:"text"`
 	Data        string    `json:"data"`
 	EntryType   string    `json:"entryType"`
@@ -63,8 +63,15 @@ func ServiceStatusHandler(w http.ResponseWriter, r *http.Request) {
 			return
 
 		}
-		config.InsertTimeSeriesRow(incomingStatusMessage.ToDBrow())
-		w.Write([]byte("ok"))
+		inserterror := config.InsertTimeSeriesRow(incomingStatusMessage.ToDBrow())
+		if inserterror != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(inserterror.Error()))
+
+		} else {
+			w.Write([]byte("ok"))
+
+		}
 	} else {
 		utils.ReturnWithError(http.StatusBadRequest, "you must send JSON", w)
 		return
@@ -171,7 +178,7 @@ func (me *ServiceAlert) ToDBrow() config.DBrow {
 	tempro.Lat = 50.9
 	tempro.Lng = -1.5
 	tempDstring := make(map[string]string)
-	tempDstring["level"] = me.Level
+	tempDstring["level"] = fmt.Sprintf("%d", me.Level)
 	tempDstring["data"] = me.Data
 	tempDstring["text"] = me.Text
 	tempDstring["entryType"] = me.EntryType
