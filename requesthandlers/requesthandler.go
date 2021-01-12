@@ -47,7 +47,9 @@ func ServiceGetLatestHandler(w http.ResponseWriter, r *http.Request) {
 	outdata, marshaleerr := json.MarshalIndent(rows, " ", " ")
 	if marshaleerr == nil {
 		w.Write(outdata)
+		return
 	}
+	w.Write([]byte("We got an errir " + marshaleerr.Error()))
 }
 
 func ServiceGetMessageForAppBetweenTimesHandler(w http.ResponseWriter, r *http.Request) {
